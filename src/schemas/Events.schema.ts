@@ -33,14 +33,7 @@ const eventsSchema = new Schema({
     type: [Schema.Types.ObjectId],
     ref: 'Speaker'
   },
-  sponsors: {
-    type: [Schema.Types.ObjectId],
-    ref: 'Sponsor'
-  },
-  plans: {
-    type: [Schema.Types.ObjectId],
-    ref: 'Plan'
-  }
+
 }, { timestamps: true })
 
 export default model('Event', eventsSchema)

@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
-import customErrorHandler from "../../utils/customErrorHandler";
-import { newEventDataValidator } from "../../libs/joi";
+import Plans from '../../schemas/SponsorshipPlans'
 import Events from "../../schemas/Events.schema";
+
+import { newPlanDataValidator, newEventDataValidator } from "../../libs/joi";
+import customErrorHandler from "../../utils/customErrorHandler";
 import createSlugname from "../../utils/createSlugname";
 
 //  Create a new event
@@ -23,7 +25,7 @@ export const createNewEvent = customErrorHandler(async (req: Request, res: Respo
   }
 
   // Create event 
-  let event = await Events.create({ ...value, plans: [], status: 'pending', speakers: [], sponsors: [], slugname })
+  let event = await Events.create({ ...value, status: 'pending', sponsors: [], slugname })
 
   res.status(200).json({ success: true, message: 'Event was successfully created', _id: event._id, slugname })
 })
@@ -61,8 +63,52 @@ export const editAnEvent = customErrorHandler(async (req: Request, res: Response
 
   res.status(200).json({ success: true, message: 'Event was successfully updated', })
 })
+// Create a plan for an event
+export const createANewPlan = customErrorHandler(async (req: Request, res: Response) => {
+  const { error, value } = newPlanDataValidator.validate(req.body)
+  const { eventId } = req.params
+
+  if (error) {
+    res.status(400);
+    throw new Error(error?.details[0]?.message || 'An error occurred during operation')
+  }
+
+  // Check event ID
+  const event = await Events.findOne({ _id: eventId })
+  if (!event) {
+    res.status(404)
+    throw new Error("The provided event doesn't exist")
+  }
+
+  // Create plan
+  const plan = await Plans.create(value)
+
+  res.status(200).json({ success: true, message: 'Plan was created successfully', planId: plan._id })
+})
+
+// Get event plans
+export const getPlans = customErrorHandler(async (req: Request, res: Response) => {
+  const { eventId } = req.params
+
+  // Get Plans 
+  const plans = await Plans.find({ eventId }).populate('benefits', "_id benefit")
+  res.status(200).json({ success: true, count: plans?.length, result: plans })
+})
 
 // Mark an event as completed
+export const markEventCompleted = customErrorHandler(async (req: Request, res: Response) => {
+  const { eventId } = req.params
+
+  // Check event ID
+  const event = await Events.findOne({ _id: eventId })
+  if (!event) {
+    res.status(404)
+    throw new Error("The provided event doesn't exist")
+  }
+  // Update event
+  await Events.updateOne({ _id: eventId }, { $set: { status: 'completed' } })
+  res.status(200).json({ success: true, message: 'Event was succesfully marked as completed' })
+})
 
 // Get most current event
 

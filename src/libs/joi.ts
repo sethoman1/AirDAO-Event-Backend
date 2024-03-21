@@ -12,3 +12,9 @@ export const newEventDataValidator = Joi.object({
   startDate: Joi.date(),
   endDate: Joi.date(),
 })
+
+export const newPlanDataValidator = Joi.object({
+  price: Joi.number().required(),
+  packageName: Joi.string().required().min(4),
+  benefits: Joi.array().items(Joi.string()).min(1).required()
+})
