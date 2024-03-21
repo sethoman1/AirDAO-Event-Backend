@@ -1,9 +1,10 @@
 import http from 'http'
 import { config } from 'dotenv'
-config()
 
-import app from './app'
 import { connectDB } from './libs/mongoose'
+import app from './app'
+
+config()
 
 const server = http.createServer(app)
 const PORT = process.env.PORT || 8000;

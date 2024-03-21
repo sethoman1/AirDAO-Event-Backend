@@ -4,11 +4,8 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 
 import appRouter from './routes'
-import error from './middlewares/error.middleware'
 
 const app = express()
-
-
 
 app.use(express.json())
 app.use(morgan('combined'))
@@ -17,6 +14,5 @@ app.use(helmet())
 
 app.use('/api', appRouter)
 
-app.use(error)
 
 export default app
