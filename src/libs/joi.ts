@@ -1,7 +1,8 @@
 import Joi from 'joi'
 
 export const newBenefitDataValidator = Joi.object({
-  benefit: Joi.string().required().min(4)
+  title: Joi.string().required().min(4),
+  description: Joi.string().required().min(4)
 })
 
 export const newEventDataValidator = Joi.object({

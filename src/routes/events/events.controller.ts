@@ -81,7 +81,7 @@ export const createANewPlan = customErrorHandler(async (req: Request, res: Respo
   }
 
   // Create plan
-  const plan = await Plans.create(value)
+  const plan = await Plans.create({ ...value, eventId })
 
   res.status(200).json({ success: true, message: 'Plan was created successfully', planId: plan._id })
 })
@@ -91,7 +91,7 @@ export const getPlans = customErrorHandler(async (req: Request, res: Response) =
   const { eventId } = req.params
 
   // Get Plans 
-  const plans = await Plans.find({ eventId }).populate('benefits', "_id benefit")
+  const plans = await Plans.find({ eventId }).populate('benefits', "_id title description")
   res.status(200).json({ success: true, count: plans?.length, result: plans })
 })
 
