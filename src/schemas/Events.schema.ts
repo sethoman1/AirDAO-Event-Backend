@@ -13,8 +13,16 @@ const eventsSchema = new Schema({
   edition: {
     type: String,
   },
-  slugName: {
+  slugname: {
     type: String,
+    required: true
+  },
+  startDate: {
+    type: Date,
+    required: true
+  },
+  endDate: {
+    type: Date,
     required: true
   },
   status: {
@@ -24,9 +32,14 @@ const eventsSchema = new Schema({
   speakers: {
     type: [Schema.Types.ObjectId],
     ref: 'Speaker'
-  }, 
-  plans : {
-    
+  },
+  sponsors: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Sponsor'
+  },
+  plans: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Plan'
   }
 }, { timestamps: true })
 
