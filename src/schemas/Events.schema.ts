@@ -27,6 +27,7 @@ const eventsSchema = new Schema({
   },
   status: {
     type: String,
+    enum: ['pending', 'completed', 'cancelled'],
     default: 'pending'
   },
   speakers: {

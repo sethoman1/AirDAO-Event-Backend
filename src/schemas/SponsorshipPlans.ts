@@ -16,6 +16,13 @@ const plansSchema = new Schema({
   benefits: {
     type: [Schema.Types.ObjectId],
     ref: 'Benefit'
+  },
+  slots: {
+    type: Number,
+    required: true
+  },
+  availableSlots: {
+    type: Number
   }
 })
 

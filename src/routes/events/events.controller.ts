@@ -111,8 +111,27 @@ export const markEventCompleted = customErrorHandler(async (req: Request, res: R
 })
 
 // Get most current event
+export const getCurrentEvent = customErrorHandler(async (req: Request, res: Response) => {
+  const current = await Events.findOne({ status: 'pending' })
+  if (!current) {
+    throw new Error('There is no current event. All events have been completed...')
+  }
+
+  // Get plans
+  const plans = await Plans.find({ eventId: current?._id }).populate('benefits', "_id title description")
+
+  // Get sponsors
+
+  // Get approved speakers
+  const { _id, name, edition, location, slugname, startDate, endDate } = current
+  res.status(200).json({ result: { _id, name, edition, location, slugname, startDate, endDate, plans } })
+})
 
 // Register as a speaker for an event
+
+export const registerAsASpeakerForEvent = customErrorHandler(async (req: Request, res: Response) => {
+
+})
 
 // Register for an event
 

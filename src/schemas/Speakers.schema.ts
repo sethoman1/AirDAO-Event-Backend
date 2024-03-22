@@ -22,12 +22,14 @@ const speakersSchema = new Schema({
   },
   id: {
     type: String,
-    required: true,
     unique: true
   },
   email: {
     type: String,
     required: true
+  },
+  address: {
+    type: String,
   },
   orgName: {
     type: String,
@@ -37,13 +39,21 @@ const speakersSchema = new Schema({
     type: String,
     required: true
   },
-  image: {
+  photo: {
     type: String,
+  },
+  rejectReason: {
+    type: String
   },
   handles: [handleSchema],
   status: {
     type: String,
+    enum: ['pending', 'approved', 'rejected'],
     default: 'pending'
+  },
+  // This code will be used for verifying the user and allowing them to edit their account
+  code: {
+    type: String
   }
 
 }, { timestamps: true })
