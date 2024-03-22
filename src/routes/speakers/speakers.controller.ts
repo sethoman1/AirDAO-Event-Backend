@@ -35,11 +35,17 @@ export const registerAsASpeaker = customErrorHandler(async (req: Request, res: R
   res.status(200).json({ success: true, message: 'Your request to be a speaker in AirDAO was successful and is pending approval...' })
 })
 
-// List All Pending Speaker Requests
-export const listAllPendingSpeakers = customErrorHandler(async (req: Request, res: Response) => {
-  const pending = await Speakers.find({ status: 'pending' })
+// List All Speaker Requests
+export const listSpeakers = customErrorHandler(async (req: Request, res: Response) => {
+  let { filter } = req.query
+  let obj = {}
+  if (filter && ['pending', 'approved', 'rejected'].includes((filter as string).toLowerCase())) {
+    obj = { status: filter }
+  }
+  const pending = await Speakers.find(obj, { __v: 0, _id: 0 })
   res.status(200).json({ result: pending, count: pending?.length })
 })
+
 
 // Edit Details
 // User must first receive a token that they can use for the edit. 
@@ -64,7 +70,6 @@ export const getEditValidationToken = customErrorHandler(async (req: Request, re
   await Speakers.updateOne({ id }, { $set: { code } })
   res.status(200).json({ success: true, message: 'Valdation token successfully sent to your email...' })
 })
-
 
 export const editASpeaker = customErrorHandler(async (req: Request, res: Response) => {
   const { error, value } = editSpeakerDataValidator.validate(req.body)
@@ -95,7 +100,7 @@ export const editASpeaker = customErrorHandler(async (req: Request, res: Respons
 
   }
   // Update user
-  await Speakers.updateOne({}, { $set: { ...value, status: 'pending' } })
+  await Speakers.updateOne({ id }, { $set: { ...value, status: 'pending' } })
 
   res.status(200).json({ success: true, message: 'The speaker was successfully updated' })
 })

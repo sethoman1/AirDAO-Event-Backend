@@ -37,6 +37,13 @@ export const moderateSpeakerDataValidator = Joi.object({
   rejectReason: Joi.string().optional()
 })
 
+export const registerAsASpeakerForAnEventDataValidator = Joi.object({
+  speakerId: Joi.string().required().min(1),
+  presentationTopic: Joi.string().required().min(5),
+  presentationAbstract: Joi.string().required().min(5),
+  additionalComments: Joi.string().optional()
+})
+
 export const newPlanDataValidator = Joi.object({
   price: Joi.number().required(),
   packageName: Joi.string().required().min(4),

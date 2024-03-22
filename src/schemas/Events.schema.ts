@@ -1,5 +1,29 @@
 import { Schema, model } from "mongoose";
 
+const speakerRequestsSchema = new Schema({
+  speakerId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Speaker',
+    required: true
+  },
+  presentationTopic: {
+    type: String,
+    required: true
+  },
+  presentationAbstract: {
+    type: String,
+    required: true
+  },
+  additionalComments: {
+    type: String,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'approved', "rejected"],
+    required: true
+  }
+
+}, { _id: false })
 
 const eventsSchema = new Schema({
   name: {
@@ -31,7 +55,7 @@ const eventsSchema = new Schema({
     default: 'pending'
   },
   speakers: {
-    type: [Schema.Types.ObjectId],
+    type: [speakerRequestsSchema],
     ref: 'Speaker'
   },
 

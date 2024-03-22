@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import Plans from '../../schemas/SponsorshipPlans'
 import Events from "../../schemas/Events.schema";
 
-import { newPlanDataValidator, newEventDataValidator } from "../../libs/joi";
+import { newPlanDataValidator, newEventDataValidator, registerAsASpeakerForAnEventDataValidator } from "../../libs/joi";
 import customErrorHandler from "../../utils/customErrorHandler";
 import createSlugname from "../../utils/createSlugname";
+import Speakers from "../../schemas/Speakers.schema";
 
 //  Create a new event
 export const createNewEvent = customErrorHandler(async (req: Request, res: Response) => {
@@ -25,7 +26,7 @@ export const createNewEvent = customErrorHandler(async (req: Request, res: Respo
   }
 
   // Create event 
-  let event = await Events.create({ ...value, status: 'pending', sponsors: [], slugname })
+  let event = await Events.create({ ...value, status: 'pending', speakers: [], slugname })
 
   res.status(200).json({ success: true, message: 'Event was successfully created', _id: event._id, slugname })
 })
@@ -128,9 +129,42 @@ export const getCurrentEvent = customErrorHandler(async (req: Request, res: Resp
 })
 
 // Register as a speaker for an event
-
 export const registerAsASpeakerForEvent = customErrorHandler(async (req: Request, res: Response) => {
+  const { eventId } = req.params
+  const { error, value } = registerAsASpeakerForAnEventDataValidator.validate(req.body)
+  if (error) {
+    res.status(400)
+    throw new Error(error?.details[0]?.message)
+  }
 
+  // Get the event by eventId
+  const event = await Events.findOne({ _id: eventId })
+  if (!event) {
+    res.status(404)
+    throw new Error("The provided event does not exist")
+  }
+
+  // Get speaker and check status
+  const speaker = await Speakers.findOne({ _id: value?.speakerId })
+  if (speaker?.status !== 'approved') {
+    res.status(401)
+    throw new Error("The provided speaker isn't authorized to perfrom this action...")
+  }
+
+  // Check if a request exists with the same userId
+  let exists = event?.speakers?.find(speaker => speaker.speakerId.equals(value.speakerId))
+  if (exists) {
+    // The user already has a request
+    res.status(401)
+    throw new Error('The speaker has already sent a request to be a speaker at the said event!')
+  }
+  // Send an email to admin to tell them of the new request
+
+  // Send an email to speaker to notify them that the request has been received 
+
+  // Create a speaker request
+  await Events.updateOne({ _id: eventId }, { $push: { speakers: { ...value, status: 'pending' } } })
+  res.status(200).json({ success: true, message: 'The request to become a speaker has been sent successfully...' })
 })
 
 // Register for an event
