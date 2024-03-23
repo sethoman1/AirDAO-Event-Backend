@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
-
-const handleSchema = new Schema({
+export const handleSchema = new Schema({
   name: {
     type: String,
     required: true

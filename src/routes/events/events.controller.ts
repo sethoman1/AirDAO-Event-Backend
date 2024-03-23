@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import Plans from '../../schemas/SponsorshipPlans'
+import Plans from '../../schemas/Plans.schema'
 import Events from "../../schemas/Events.schema";
 
 import { newPlanDataValidator, newEventDataValidator, registerAsASpeakerForAnEventDataValidator } from "../../libs/joi";

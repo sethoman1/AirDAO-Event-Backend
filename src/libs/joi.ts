@@ -50,3 +50,17 @@ export const newPlanDataValidator = Joi.object({
   benefits: Joi.array().items(Joi.string()).min(1).required(),
   slots: Joi.number().required()
 })
+
+
+
+export const newSponsorDataValidator = Joi.object({
+  fullname: Joi.string().required().min(5),
+  phone: Joi.string().required().min(10),
+  jobTitle: Joi.string().required().min(4),
+  handles: Joi.array().items(Joi.object({
+    name: Joi.string().required(),
+    link: Joi.string().required()
+  })).min(1).required(),
+  bio: Joi.string().required().min(4),
+  planId: Joi.string().required().min(4),
+})
