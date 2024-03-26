@@ -64,3 +64,17 @@ export const newSponsorDataValidator = Joi.object({
   bio: Joi.string().required().min(4),
   planId: Joi.string().required().min(4),
 })
+
+export const loginUserDataValidator = Joi.object({
+  username: Joi.string().required().min(4),
+  password: Joi.string().required().min(8)
+})
+
+export const resetPasswordDataValidator = Joi.object({
+  email: Joi.string().required().min(4).email(),
+})
+
+export const setPasswordDataValidator = Joi.object({
+  token: Joi.string().required().min(4),
+  password: Joi.string().required().min(4),
+})
