@@ -96,6 +96,9 @@ export const getPlans = customErrorHandler(async (req: Request, res: Response) =
   res.status(200).json({ success: true, count: plans?.length, result: plans })
 })
 
+// Get current event plans
+
+
 // Mark an event as completed
 export const markEventCompleted = customErrorHandler(async (req: Request, res: Response) => {
   const { eventId } = req.params
@@ -113,13 +116,13 @@ export const markEventCompleted = customErrorHandler(async (req: Request, res: R
 
 // Get most current event
 export const getCurrentEvent = customErrorHandler(async (req: Request, res: Response) => {
-  const current = await Events.findOne({ status: 'pending' })
+  const current = await Events.findOne({ status: 'pending' }).sort({ startDate: 1 })
   if (!current) {
     throw new Error('There is no current event. All events have been completed...')
   }
 
   // Get plans
-  const plans = await Plans.find({ eventId: current?._id }).populate('benefits', "_id title description")
+  const plans = await Plans.find({ eventId: current?._id }, { __v: 0, eventId: 0 }).populate('benefits', "_id title description")
 
   // Get sponsors
 
@@ -127,7 +130,17 @@ export const getCurrentEvent = customErrorHandler(async (req: Request, res: Resp
   const { _id, name, edition, location, slugname, startDate, endDate } = current
   res.status(200).json({ result: { _id, name, edition, location, slugname, startDate, endDate, plans } })
 })
+// Get most current event plans
+export const getCurrentEventPlans = customErrorHandler(async (req: Request, res: Response) => {
+  const current = await Events.findOne({ status: 'pending' }).sort({ startDate: 1 })
+  if (!current) {
+    throw new Error('There is no current event. All events have been completed...')
+  }
 
+  // Get plans
+  const plans = await Plans.find({ eventId: current?._id }).populate('benefits', "_id title description")
+  res.status(200).json({ result: plans })
+})
 // Register as a speaker for an event
 export const registerAsASpeakerForEvent = customErrorHandler(async (req: Request, res: Response) => {
   const { eventId } = req.params

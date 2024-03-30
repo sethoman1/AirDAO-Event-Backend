@@ -4,7 +4,6 @@ import Users from "../../schemas/Users.schema";
 import customErrorHandler from "../../utils/customErrorHandler";
 import { loginUserDataValidator, resetPasswordDataValidator, setPasswordDataValidator } from "../../libs/joi";
 import jwt from "jsonwebtoken";
-import { StringExpressionOperatorReturningBoolean } from "mongoose";
 import generateKey from "../../utils/generateKey";
 
 // Login as admin
@@ -34,7 +33,7 @@ export const loginAdmin = customErrorHandler(async (req: Request, res: Response)
   const { _id, username, email } = user
 
   // Create token
-  const token = await jwt.sign({ _id, username }, process.env.JWT_KEY as string, { expiresIn: '6h' })
+  const token = await jwt.sign({ _id, username }, process.env.JWT_KEY as string, { expiresIn: '1d' })
   res.status(200).json({ success: true, token, data: { _id, email, username } })
 })
 
@@ -84,7 +83,8 @@ export const setPassword = customErrorHandler(async (req: Request, res: Response
   }
 
   // Fetch user and compare code
-  const user: any = await Users.findOne({ _id: valid._id, code: valid.code })
+  console.log(valid)
+  const user: any = await Users.findOne({ _id: valid._id })
   if (!user) {
     throw new Error('The provided token is invalid')
   }
